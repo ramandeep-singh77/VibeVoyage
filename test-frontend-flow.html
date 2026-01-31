@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Frontend Flow</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>VibeVoyage Frontend Flow Test</h1>
+    
+    <div class="test-section">
+        <h3>1. Test Destination Suggestions</h3>
+        <button onclick="testDestinationSuggestions()">Test Destination API</button>
+        <div id="dest-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Test Itinerary Generation</h3>
+        <button onclick="testItineraryGeneration()">Test Itinerary API</button>
+        <div id="itinerary-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. Test LocalStorage</h3>
+        <button onclick="testLocalStorage()">Test LocalStorage</button>
+        <div id="storage-result"></div>
+    </div>
+
+    <script>
+        async function testDestinationSuggestions() {
+            const resultDiv = document.getElementById('dest-result');
+            resultDiv.innerHTML = '<p>Testing destination suggestions...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/itinerary/destination-suggestions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ destination: 'Paris, France' }),
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h4>✅ Success!</h4>
+                        <p><strong>Destination:</strong> ${data.data.destination}</p>
+                        <p><strong>Suggested Interests:</strong> ${data.data.suggestedInterests?.join(', ')}</p>
+                        <p><strong>Best Time:</strong> ${data.data.destinationInfo?.bestTimeToVisit}</p>
+                        <p><strong>Average Budget:</strong> $${data.data.destinationInfo?.averageBudgetPerDay}/day</p>
+                    `;
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `<h4>❌ Error:</h4><p>${error.message}</p>`;
+            }
+        }
+
+        async function testItineraryGeneration() {
+            const resultDiv = document.getElementById('itinerary-result');
+            resultDiv.innerHTML = '<p>Testing itinerary generation...</p>';
+            
+            try {
+                const testData = {
+                    destination: "Paris, France",
+                    startDate: "2026-06-01",
+                    endDate: "2026-06-03",
+                    budget: 1000,
+                    interests: ["culture", "food", "history"],
+                    travelVibe: "explorer"
+                };
+
+                const response = await fetch('http://localhost:5000/api/itinerary/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData),
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store in localStorage like the real app does
+                    localStorage.setItem('generatedItinerary', JSON.stringify(data.data));
+                    
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h4>✅ Success!</h4>
+                        <p><strong>Destination:</strong> ${data.data.tripSummary.destination}</p>
+                        <p><strong>Duration:</strong> ${data.data.tripSummary.totalDays} days</p>
+                        <p><strong>Budget:</strong> $${data.data.tripSummary.budget}</p>
+                        <p><strong>AI Model:</strong> ${data.data.metadata.aiModel}</p>
+                        <p><strong>Days Generated:</strong> ${data.data.dailyItinerary.length}</p>
+                        <p><strong>First Day Activities:</strong> ${data.data.dailyItinerary[0]?.activities.length}</p>
+                        <p style="color: green;"><strong>✅ Data stored in localStorage!</strong></p>
+                    `;
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `<h4>❌ Error:</h4><p>${error.message}</p>`;
+            }
+        }
+
+        function testLocalStorage() {
+            const resultDiv = document.getElementById('storage-result');
+            
+            try {
+                const storedItinerary = localStorage.getItem('generatedItinerary');
+                
+                if (storedItinerary) {
+                    const parsed = JSON.parse(storedItinerary);
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h4>✅ LocalStorage Working!</h4>
+                        <p><strong>Stored Destination:</strong> ${parsed.tripSummary?.destination}</p>
+                        <p><strong>Stored Days:</strong> ${parsed.dailyItinerary?.length}</p>
+                        <p><strong>Data Size:</strong> ${storedItinerary.length} characters</p>
+                        <details>
+                            <summary>View Raw Data</summary>
+                            <pre>${JSON.stringify(parsed, null, 2)}</pre>
+                        </details>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = '<h4>❌ No data in localStorage</h4><p>Run the itinerary generation test first.</p>';
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `<h4>❌ Error:</h4><p>${error.message}</p>`;
+            }
+        }
+
+        // Auto-run tests on page load
+        window.onload = function() {
+            console.log('Frontend flow test page loaded');
+            console.log('Backend should be running on http://localhost:5000');
+            console.log('Frontend should be running on http://localhost:8080');
+        };
+    </script>
+</body>
+</html>
