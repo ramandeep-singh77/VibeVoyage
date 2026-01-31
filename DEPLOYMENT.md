@@ -56,10 +56,19 @@ cd ..
    ```
 
 3. **Set Environment Variables**
+   
+   In your Vercel project dashboard:
+   - Go to Settings → Environment Variables
+   - Add the following variables:
    ```
    VITE_API_URL=https://your-backend-url.vercel.app
    VITE_GOOGLE_MAPS_API_KEY=AIzaSyC8zTjtFNz-aACgGDE4utlb1fMhBJO82dE
    ```
+   
+   **Important**: 
+   - Set these as regular environment variables, NOT secrets
+   - Make sure to select "Production" environment
+   - The VITE_API_URL should point to your deployed backend URL
 
 4. **Deploy**
    - Click "Deploy"
