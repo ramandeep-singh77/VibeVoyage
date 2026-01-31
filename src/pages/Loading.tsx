@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Compass } from "lucide-react";
-import { API_ENDPOINTS } from "@/lib/api";
+import { API_ENDPOINTS, apiCall } from "@/lib/api";
 
 const loadingMessages = [
   "Understanding your travel vibe…",
@@ -45,16 +45,11 @@ const Loading = () => {
         }, 200);
 
         // Call the AI API
-        const response = await fetch(API_ENDPOINTS.GENERATE_ITINERARY, {
+        const result = await apiCall(API_ENDPOINTS.GENERATE_ITINERARY, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify(tripData),
         });
 
-        console.log('📥 API Response status:', response.status);
-        const result = await response.json();
         console.log('📥 API Response success:', result.success);
 
         if (result.success) {

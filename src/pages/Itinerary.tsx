@@ -8,7 +8,7 @@ import {
   Map, ChevronRight, Home, Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { API_ENDPOINTS } from "@/lib/api";
+import { API_ENDPOINTS, apiCall } from "@/lib/api";
 import BudgetBreakdown from "@/components/BudgetBreakdown";
 import BottomNav from "@/components/BottomNav";
 import GoogleMap from "@/components/GoogleMap";
@@ -171,11 +171,8 @@ const Itinerary = () => {
     
     setRegeneratingDay(selectedDay);
     try {
-      const response = await fetch(API_ENDPOINTS.REGENERATE_DAY, {
+      const result = await apiCall(API_ENDPOINTS.REGENERATE_DAY, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           itineraryId: itinerary.id,
           dayNumber: selectedDay,
@@ -188,7 +185,6 @@ const Itinerary = () => {
         }),
       });
 
-      const result = await response.json();
       if (result.success) {
         // Update the itinerary with the new day data
         const updatedItinerary = { ...itinerary };

@@ -17,7 +17,8 @@ import {
   Music, Waves, Coffee, Users, Plane, Train
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { API_ENDPOINTS } from "@/lib/api";
+import { API_ENDPOINTS, apiCall } from "@/lib/api";
+import ApiHealthCheck from "@/components/ApiHealthCheck";
 
 const allInterests = [
   { id: "culture", label: "Culture", icon: Compass },
@@ -106,27 +107,19 @@ const CreateTrip = () => {
       setLoadingSuggestions(true);
       try {
         console.log('🔍 Fetching suggestions for:', destination);
-        const response = await fetch(API_ENDPOINTS.DESTINATION_SUGGESTIONS, {
+        const data = await apiCall(API_ENDPOINTS.DESTINATION_SUGGESTIONS, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify({ destination }),
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          console.log('📥 Received suggestions:', data);
-          if (data.success) {
-            setDestinationInfo(data.data);
-            setSuggestionsLoaded(true);
-            // Auto-select suggested interests
-            const suggestedInterests = data.data.suggestedInterests || [];
-            console.log('🎯 Auto-selecting interests:', suggestedInterests);
-            setSelectedInterests(suggestedInterests);
-          }
-        } else {
-          console.error('❌ Failed to fetch suggestions:', response.status);
+        console.log('📥 Received suggestions:', data);
+        if (data.success) {
+          setDestinationInfo(data.data);
+          setSuggestionsLoaded(true);
+          // Auto-select suggested interests
+          const suggestedInterests = data.data.suggestedInterests || [];
+          console.log('🎯 Auto-selecting interests:', suggestedInterests);
+          setSelectedInterests(suggestedInterests);
         }
       } catch (error) {
         console.error('❌ Error getting destination suggestions:', error);
@@ -222,6 +215,9 @@ const CreateTrip = () => {
 
       {/* Step Content */}
       <div className="container mx-auto px-4 max-w-2xl">
+        {/* API Health Check - Only show in development */}
+        {import.meta.env.DEV && <ApiHealthCheck />}
+        
         {/* Step 1: Destination & Dates */}
         {step === 1 && (
           <div className="space-y-6 animate-fade-in">
