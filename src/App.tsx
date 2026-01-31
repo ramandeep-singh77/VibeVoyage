@@ -12,6 +12,7 @@ import Itinerary from "./pages/Itinerary";
 import SampleItinerary from "./pages/SampleItinerary";
 import NotFound from "./pages/NotFound";
 import Test from "./pages/Test";
+import Minimal from "./pages/Minimal";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +44,7 @@ const App = () => {
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
               <Route path="/" element={<Landing />} />
+              <Route path="/minimal" element={<Minimal />} />
               <Route path="/test" element={<Test />} />
               <Route path="/create" element={<CreateTrip />} />
               <Route path="/loading" element={<Loading />} />
