@@ -17,6 +17,7 @@ import {
   Music, Waves, Coffee, Users, Plane, Train
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { API_ENDPOINTS } from "@/lib/api";
 
 const allInterests = [
   { id: "culture", label: "Culture", icon: Compass },
@@ -105,7 +106,7 @@ const CreateTrip = () => {
       setLoadingSuggestions(true);
       try {
         console.log('🔍 Fetching suggestions for:', destination);
-        const response = await fetch('http://localhost:5000/api/itinerary/destination-suggestions', {
+        const response = await fetch(API_ENDPOINTS.DESTINATION_SUGGESTIONS, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

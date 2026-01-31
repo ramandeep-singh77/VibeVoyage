@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Compass } from "lucide-react";
+import { API_ENDPOINTS } from "@/lib/api";
 
 const loadingMessages = [
   "Understanding your travel vibe…",
@@ -44,7 +45,7 @@ const Loading = () => {
         }, 200);
 
         // Call the AI API
-        const response = await fetch('http://localhost:5000/api/itinerary/generate', {
+        const response = await fetch(API_ENDPOINTS.GENERATE_ITINERARY, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -4,13 +4,17 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 8080",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "vite preview --port 8080",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "vercel-build": "npm run build",
+    "deploy": "vercel --prod",
+    "deploy:frontend": "vercel --prod",
+    "deploy:backend": "cd backend && vercel --prod"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
