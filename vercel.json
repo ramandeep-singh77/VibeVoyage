@@ -4,9 +4,22 @@
   "outputDirectory": "dist",
   "routes": [
     {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico",
+      "headers": {
+        "cache-control": "public, max-age=86400"
+      }
+    },
+    {
       "src": "/assets/(.*)",
       "headers": {
         "cache-control": "max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/(.*\\.(ico|png|jpg|jpeg|gif|svg|webp))",
+      "headers": {
+        "cache-control": "public, max-age=86400"
       }
     },
     {
